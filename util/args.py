@@ -1,15 +1,23 @@
 import argparse
 
+TEST = True
+
 N = 16
-NOISE_COEFF = 1.3
-DELTA = 0.05
-BOUND = 0.25
 EXP = -5
+NOISE_COEFF = 1.
+BOUND = 0.25
+DELTA = 0.05
+
+if TEST:
+    N = 10
+    BOUND = 1.
+    NOISE_COEFF = 0
 
 STD = 5
 ERROR = 0.5
 NERROR = 15
 NCTL = 5
+TIME = 1
 
 EMBEDDING = 'tsne'
 
@@ -26,6 +34,7 @@ parser.add_argument('-xe', '--max-error', type=float, default=ERROR, help='maxim
 parser.add_argument('-re', '--random-errors', type=int, default=NERROR, help='number of random errors: default: %d' % NERROR)
 parser.add_argument('-ne', '--non-errors', type=int, default=NCTL, help='number of controls: default: %d' % NCTL)
 parser.add_argument('-E', '--embedding', type=str, default=EMBEDDING, help='embedding function. default: %s' % EMBEDDING)
+parser.add_argument('-t', '--time', type=int, default=1, help='movement time points. default: %s' % TIME)
 parser.add_argument('--save', nargs='?', const=None, default=False, help='pickle net (saved to ./data).')
 
 def print_args(args, default=True):

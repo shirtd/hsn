@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-from primitives.interact import StaticErrorInteract
-from primitives.network import HSN, LoadHSN
+from primitives.interact import StaticErrorInteract, DynamicErrorInteract
 from util.args import parser, print_args
+from primitives.hsn import HSN, LoadHSN
 import pickle as pkl
 import numpy as np
 
@@ -30,6 +30,16 @@ if __name__ == '__main__':
         rfp = np.random.rand(args.random_errors)
         fp = list(rfp) + [0] * args.non_errors
 
-        ARGS = (args.max_error, args.std, fp, args.embedding)
-        self = StaticErrorInteract(net, *ARGS)
+        if args.time > 1:
+            # t = np.random.randint(-net.net_size, net.net_size, size=(len(fp), 5, 2))
+            # t = np.random.randint(-net.net_size, net.net_size, size=(args.time, 2))
+            t = np.tile(np.linspace(-net.net_size, net.net_size, args.time, dtype=int), (2, 1)).T
+            fpt = [(i, x, z) for i, x in enumerate(fp) for z in t]
+            ARGS = (args.max_error, fpt, args.embedding)
+            finteract = DynamicErrorInteract
+        else:
+            ARGS = (args.max_error, args.std, fp, args.embedding)
+            finteract = StaticErrorInteract
+
+        self = finteract(net, *ARGS)
         input('[ press any key to exit ]')

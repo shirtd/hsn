@@ -1,10 +1,19 @@
 from util.persist import dgm_lim, clean_dgm
 from matplotlib.colors import Normalize
-from util.plot import get_axes, plt
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import dionysus as dio
 from abc import ABC
 import numpy as np
+
+plt.ion()
+
+def get_axes(row=1, col=1, is_3d=False, **kw):
+    if is_3d: kw['projection'] = '3d'
+    fig, ax = plt.subplots(row, col, **kw)
+    plt.tight_layout()
+    return fig, ax
 
 def plot_model(P, **kw):
     fig, ax = get_axes(1, 1)
@@ -28,20 +37,30 @@ def plot_dgms(ax, Ds):
         input('...')
         plt.close(fig2)
 
+
+''' ------------ *
+ | ABSTRACT TYPE |
+ * ------------ '''
+
 class NetPlot(ABC):
     fig, plots = None, {}
+    
     def __init__(self, *args, **kw):
         self._args, self._kw = args, kw
+
     def get_color(self, x):
         return (np.array(x) - min(x)) / (max(x) - min(x))
+
     def get_cmap(self, x, cmap=cm.coolwarm):
         c = cm.ScalarMappable(Normalize(min(x), max(x)), cmap)
         return np.array([list(c.to_rgba(v))[:3] for v in x])
+
     def init_plot(self):
         if self.fig is not None: plt.close(self.fig)
         self.fig, self.ax = get_axes(*self._args, **self._kw)
         self.fig.subplots_adjust(wspace=0.125)
         self.handle, self.plots = None, {}
+
     def init_net(self, axis, net):
         list(map(axis.axis, ('equal', 'off')))
         self.plots['net'] = {}

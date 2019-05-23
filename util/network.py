@@ -5,7 +5,6 @@ from scipy import spatial
 import numpy.linalg as la
 import dionysus as dio
 import numpy as np
-from util import *
 
 ''''''''''''''''''''''''''''''
 ''' GAUSSIAN NETWORK UTIL  '''
@@ -14,22 +13,12 @@ from util import *
 def in_hull(p, n):
     return 0 in p or n - 1 in p
 
-def grid_idx(n):
-    if isinstance(n, int):
-        return np.stack(np.meshgrid(range(n), range(n)), axis=2)
-    else:
-        return np.stack(np.meshgrid(n, n), axis=2)
-
 def find_contours_ext(M, t, k=4, **kwargs):
     return [c - k for c in find_contours(M, t, fully_connected='high', **kwargs)]
 
 def possible_pairs(l, i):
     return [j for j in range(len(l)) if i != j and l[j].is_ccw != l[i].is_ccw]
     # return filter(lambda j: i != j and l[j].is_ccw != l[i].is_ccw, range(len(l)))
-
-def distance_grid(X, G):
-    T = spatial.KDTree(X)
-    return np.array([[T.query(x)[0] for x in row] for row in G])
 
 def pair_contour(C):
     lines = [LinearRing(c) for c in C]
@@ -99,31 +88,3 @@ def uniform_network(n=256, t=0.125):
     bdy = sample_boundary(outer, inner, m)
     inter = sample_interior(inner, n - m)
     return np.vstack((bdy, inter)), range(m), bdy
-
-
-''''''''''''''''''
-''' DEPRECATED '''
-''''''''''''''''''
-
-# ''''''''''''''''''''''''
-# ''' gaussian network '''
-# def gaussian_network(N, t=0.5, e=0.25, alpha=-4.):
-#     p, n = grf(-4., N).flatten(), int(np.sqrt(N))
-#     G = np.stack(np.meshgrid(range(n), range(n)), axis=2).reshape(-1, 2) / (n - 1.)
-#     B_idx = filter(lambda i: (in_hull(i, n) or t <= p[i]) and p[i] < t + e, range(N))
-#     D_idx = filter(lambda i: p[i] < t and not in_hull(i, n), range(N))
-#     D, B = map(lambda i: G[i], (D_idx,B_idx))
-#     return np.vstack((B, D)), range(len(B)), B
-#
-# def is_close(C, x, alpha):
-#     return any(la.norm(c - x) <= alpha for c in C)
-# def grid_hull(n):
-#     a0, a1, an = np.full(n, 0), np.full(n, n - 1), np.array(range(n))
-#     return np.vstack((np.hstack((a0, a1, an, an)), np.hstack((an, an, a0, a1)))).T
-# def extend_grid(n, k=4):
-#     a, b, c, d = range(-k, 0), range(-k, n), range(n, n + k), range(0, n + k)
-#     top = np.stack(np.meshgrid(a, b), axis=2).reshape(-1, 2)
-#     right = np.stack(np.meshgrid(b, c), axis=2).reshape(-1, 2)
-#     bottom = np.stack(np.meshgrid(c, d), axis=2).reshape(-1, 2)
-#     left = np.stack(np.meshgrid(d, a), axis=2).reshape(-1, 2)
-#     return np.vstack((top, right, bottom, left))
