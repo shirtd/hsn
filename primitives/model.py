@@ -1,7 +1,7 @@
 from primitives.function import ErrorFunction, DynamicErrorFunction
 from sklearn.manifold import MDS, TSNE
-from util.persist import bneck_mat
-from util.tools import funzip
+from util.hsn.persist import bneck_mat
+from util.tools.fun import funzip
 from tqdm import tqdm
 from abc import ABC
 import numpy as np
@@ -21,7 +21,7 @@ class Model(ABC):
                 'perplexity' : 15
             })}
     dmat, P = None, None
-    
+
     def __init__(self, f):
         self.f = f
 

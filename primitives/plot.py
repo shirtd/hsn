@@ -1,4 +1,4 @@
-from util.persist import dgm_lim, clean_dgm
+from util.hsn.persist import dgm_lim, clean_dgm
 from matplotlib.colors import Normalize
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
@@ -44,7 +44,7 @@ def plot_dgms(ax, Ds):
 
 class NetPlot(ABC):
     fig, plots = None, {}
-    
+
     def __init__(self, *args, **kw):
         self._args, self._kw = args, kw
 

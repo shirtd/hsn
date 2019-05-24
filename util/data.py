@@ -1,5 +1,5 @@
+from numpy.random import normal, randint, rand
 from numpy.fft import fft2, ifft2
-from numpy.random import normal
 import numpy as np
 
 def circle(n=20, r=1., uniform=False, noise=0.1):
@@ -32,3 +32,12 @@ def grf(alpha, m=1024):
 def grid_idx(n):
     x = range(n) if isinstance(n, int) else n
     return np.stack(np.meshgrid(x, x), axis=2)
+
+def error_probs(n_errors, n_ctl, ctl_noise=0.01):
+    return np.concatenate((rand(10), ctl_noise * rand(n_ctl)))
+
+def random_path(n, t):
+    return randint(-n, n, size=(t, 2))
+
+def linear_path(n, t):
+    return np.tile(np.linspace(-n, n, t, dtype=int), (2, 1)).T
