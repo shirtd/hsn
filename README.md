@@ -9,17 +9,20 @@
     * cyclic
     * inside / outside domain
 * animate paths
-* color paths
-* highlight selected paths
 * command line environment
-
-#### Organization
-* add noise to name or build metadata
-* better function value assignments
+* ~~color paths~~
+* ~~highlight selected paths~~
 
 #### Efficiency
-* only update simplex function value if changed
 * parallelize
     * persistence
     * bottleneck
 * save experiments
+* ~~only update simplex function value if changed~~
+    * plot top-dim simplices only
+        * only save function values on these simplices (speedup?)
+    * patch collections? (more efficient triangle plotting)
+
+#### Organization
+* add noise to name or build metadata
+* better function value assignments

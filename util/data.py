@@ -34,7 +34,7 @@ def grid_idx(n):
     return np.stack(np.meshgrid(x, x), axis=2)
 
 def error_probs(n_errors, n_ctl, ctl_noise=0.01):
-    return np.concatenate((rand(10), ctl_noise * rand(n_ctl)))
+    return np.concatenate((rand(n_errors), ctl_noise * rand(n_ctl)))
 
 def random_path(n, t):
     return randint(-n, n, size=(t, 2))

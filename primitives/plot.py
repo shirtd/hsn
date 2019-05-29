@@ -4,6 +4,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import dionysus as dio
+from tqdm import tqdm
 from abc import ABC
 import numpy as np
 
@@ -51,7 +52,14 @@ class NetPlot(ABC):
     def get_color(self, x):
         return (np.array(x) - min(x)) / (max(x) - min(x))
 
+    def get_mappable(self, x, cmap=cm.coolwarm):
+        if isinstance(x, dict):
+            x = [x[k] for k in sorted(x.keys())]
+        return cm.ScalarMappable(Normalize(min(x), max(x)), cmap)
+
     def get_cmap(self, x, cmap=cm.coolwarm):
+        if isinstance(x, dict):
+            x = [x[k] for k in sorted(x.keys())]
         c = cm.ScalarMappable(Normalize(min(x), max(x)), cmap)
         return np.array([list(c.to_rgba(v))[:3] for v in x])
 
@@ -64,7 +72,7 @@ class NetPlot(ABC):
     def init_net(self, axis, net):
         list(map(axis.axis, ('equal', 'off')))
         self.plots['net'] = {}
-        for i, s in enumerate(net.Salpha):
+        for i, s in tqdm(list(enumerate(net.Salpha)), '[ plotting network'):
             s = dio.Simplex(*s)
             if s.dimension() == 0:
                 x = net.plot_vertex(self.ax[0], s, False)

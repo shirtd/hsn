@@ -76,7 +76,7 @@ class ErrorFunction(Function):
 ''' --------------- *
  | CONCRETE OBJECTS |
  * --------------- '''
- 
+
 class DynamicErrorFunction(ErrorFunction):
 
     def __init__(self, net, max_error):

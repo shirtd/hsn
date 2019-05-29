@@ -26,7 +26,6 @@ class Model(ABC):
         self.f = f
 
     def __call__(self, fp):
-        # return funzmap(self.f, tqdm(fp, '[ persistence'))
         return funzip(map(self.f, tqdm(fp, '[ persistence')))
 
     def run(self, fp):
@@ -40,7 +39,7 @@ class Model(ABC):
  | BASE TYPE |
  * -------- '''
 
-class StaticModel(Model):
+class ErrorModel(Model):
 
     def __init__(self, f):
         Model.__init__(self, f)
@@ -60,14 +59,14 @@ class StaticModel(Model):
  | CONCRETE OBJECTS |
  * --------------- '''
 
-class StaticError(StaticModel):
+class StaticError(ErrorModel):
 
     def __init__(self, net, max_error, std=5):
         f = ErrorFunction(net, max_error, std)
-        StaticModel.__init__(self, f)
+        ErrorModel.__init__(self, f)
 
-class DynamicError(StaticModel):
+class DynamicError(ErrorModel):
 
     def __init__(self, net, max_error):
         f = DynamicErrorFunction(net, max_error)
-        StaticModel.__init__(self, f)
+        ErrorModel.__init__(self, f)
