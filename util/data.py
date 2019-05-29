@@ -41,3 +41,11 @@ def random_path(n, t):
 
 def linear_path(n, t):
     return np.tile(np.linspace(-n, n, t, dtype=int), (2, 1)).T
+
+def circular_path(n, t):
+    x = np.cos(2 * np.pi * np.linspace(0, 1, t))
+    y = np.sin(2 * np.pi * np.linspace(0, 1, t))
+    P = n * np.c_[x, y]
+    Q = P.astype(int)
+    _, idx = np.unique(Q, axis=0, return_index=True)
+    return np.vstack((Q[np.sort(idx)], Q[0]))

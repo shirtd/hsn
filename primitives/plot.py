@@ -1,8 +1,10 @@
 from util.hsn.persist import dgm_lim, clean_dgm
+from matplotlib.colorbar import ColorbarBase
 from matplotlib.colors import Normalize
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import matplotlib as mpl
 import dionysus as dio
 from tqdm import tqdm
 from abc import ABC
@@ -62,6 +64,13 @@ class NetPlot(ABC):
             x = [x[k] for k in sorted(x.keys())]
         c = cm.ScalarMappable(Normalize(min(x), max(x)), cmap)
         return np.array([list(c.to_rgba(v))[:3] for v in x])
+
+    def colorbar(self, axis, x, cmap=cm.coolwarm):
+        norm = Normalize(min(x), max(x))
+        sm = cm.ScalarMappable(norm=norm, cmap=cmap)
+        sm._A = x
+        return self.fig.colorbar(sm, ax=axis)
+        # return ColorbarBase(axis, cmap=cmap, norm=norm)
 
     def init_plot(self):
         if self.fig is not None: plt.close(self.fig)

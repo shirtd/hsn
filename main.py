@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 from primitives.interact import StaticErrorInteract, DynamicErrorInteract
-from util.data import linear_path, error_probs
+from util.data import linear_path, error_probs, circular_path
 from util.args import parser, print_args
 from base.hsn import HSN, LoadHSN
 import pickle as pkl
 import numpy as np
 
+import matplotlib.pyplot as plt
+plt.ion()
+
 if __name__ == '__main__':
-    
+
     args = parser.parse_args()
     print_args(args)
 
@@ -28,7 +31,8 @@ if __name__ == '__main__':
         fp = error_probs(args.random_errors, args.non_errors)
 
         if args.time > 1:
-            t = linear_path(net.net_size, args.time)
+            # t = linear_path(net.net_size, args.time)
+            t = circular_path(net.net_size, args.time)
             fpt = [(i, x, z) for i, x in enumerate(fp) for z in t]
             ARGS = (args.max_error, fpt, args.embedding)
             finteract = DynamicErrorInteract

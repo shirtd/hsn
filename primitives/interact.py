@@ -23,13 +23,14 @@ class Interact(NetPlot):
         self.plots['embedding_points'][x].set_sizes([y])
 
     def plot_embedding(self, axis, net, P, c, **kw):
-        print('[ plotting embedding')
         list(map(axis.axis, ('equal', 'off')))
-        self.colors = self.get_cmap(c, cmap=cm.viridis)
+        self.cmap = self.get_mappable(c, cmap=cm.viridis)
+        self.colors = np.array([list(self.cmap.to_rgba(v))[:3] for v in c])
         kw = {**self.plot_args['embedding_points'], **kw}
         aplot = {i : axis.scatter(p[0], p[1], c=[self.colors[i]], **kw) for i,p in enumerate(P)}
         self.plots['embedding_points'] = aplot
-        # self.fig.colorbar(self.get_mappable(c, cm.viridis), ax=axis)
+        self.colorbar(axis, c, cm.viridis)
+        plt.tight_layout()
         self.connect(axis)
 
     def add_action(self, action, event):
@@ -136,7 +137,7 @@ class DynamicErrorInteract(DynamicError, ModelInteract):
         self.select_mod['embedding_curves'] = {'alpha' : 0.75}
         self.plot_args['embedding_curves'] = {'alpha' : 0.1, 'zorder' : 0}
         self.fselect['embedding_curves'] = {'alpha' : self._set_curve_alpha}
-        self.fselect['embedding_points'] = {'s' : self._set_point_sizes}
+        # self.fselect['embedding_points'] = {'s' : self._set_point_sizes}
 
         if fp is not None:
             self.run(fp, embedding, **kw)
@@ -170,8 +171,10 @@ class DynamicErrorInteract(DynamicError, ModelInteract):
         curve_plots = {}# defaultdict(list)
         self.curves = self.get_curves()
         kw = self.plot_args['embedding_curves']
+        err = np.array(self.error)
         for k, v in self.curves.items():
-            kw['c'] = self.colors[max(v, key=lambda i: self.error[i])]
+            kw['c'] = self.cmap.to_rgba(err[v].sum() / len(v))[:3]
+            # kw['c'] = self.colors[max(v, key=lambda i: self.error[i])]
             curve_plots[k] = self.ax[2].plot(self.P[v,0], self.P[v,1], **kw)
         self.plots['embedding_curves'] = curve_plots
 
