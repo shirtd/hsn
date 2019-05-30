@@ -20,10 +20,14 @@ def clean_dgm(d, unpaired=True, dtype=np.array):
 def clean_dgms(D, unpaired=True, dtype=dio.Diagram):
     return [clean_dgm(d, unpaired, dtype) for d in D]
 
+# def max_bneck(Ds, ij):
+#     return max(dio.bottleneck_distance(a, b) for a, b in zip(Ds[ij[0]], Ds[ij[1]]))
+
 def bneck_mat(ds, unpaired=False):
     n = len(ds)
     Ds = [clean_dgms(d, unpaired) for d in ds]
     dmat = np.zeros((n, n), dtype=float)
+    # pmap(max_bneck, list(combinations(range(n), 2)), Ds)
     for i, j in tqdm(list(combinations(range(n), 2)), '[ bottleneck'):
         d = max(dio.bottleneck_distance(a, b) for a, b in zip(Ds[i], Ds[j]))
         dmat[i, j] = dmat[j, i] = d

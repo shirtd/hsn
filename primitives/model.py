@@ -34,6 +34,10 @@ class Model(ABC):
     def init_embedding(self, embedding, **kw):
         pass
 
+    def get_dict(self):
+        return {'diagram' : [[[(p.birth, p.death) for p in d] for d in dgm] for dgm in self.diagram]}
+
+
 
 ''' -------- *
  | BASE TYPE |
@@ -54,19 +58,32 @@ class ErrorModel(Model):
         f = fembed(**{**kw, **default})
         self.P = f.fit_transform(self.dmat)
 
+    def get_dict(self):
+        d = super().get_dict()
+        return {**d, 'attributes' : {'error' : self.error,
+                                    'function' : self.function,
+                                    'dmat' : self.dmat}}
+
 
 ''' --------------- *
  | CONCRETE OBJECTS |
  * --------------- '''
 
 class StaticError(ErrorModel):
+    funtion_t = ErrorFunction
 
     def __init__(self, net, max_error, std=5):
-        f = ErrorFunction(net, max_error, std)
+        f = self.funtion_t(net, max_error, std)
         ErrorModel.__init__(self, f)
 
 class DynamicError(ErrorModel):
+    funtion_t = DynamicErrorFunction
 
     def __init__(self, net, max_error):
-        f = DynamicErrorFunction(net, max_error)
+        f = self.funtion_t(net, max_error)
         ErrorModel.__init__(self, f)
+
+    def get_dict(self):
+        d = super().get_dict()
+        d['attributes']['label'] = self.label
+        return d

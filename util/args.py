@@ -15,8 +15,8 @@ if TEST:
 
 STD = 5
 ERROR = 0.5
-NERROR = 15
-NCTL = 5
+NERROR = 4
+NCTL = 1
 TIME = 1
 
 EMBEDDING = 'tsne'
@@ -36,6 +36,7 @@ parser.add_argument('-ne', '--non-errors', type=int, default=NCTL, help='number 
 parser.add_argument('-E', '--embedding', type=str, default=EMBEDDING, help='embedding function. default: %s' % EMBEDDING)
 parser.add_argument('-t', '--time', type=int, default=1, help='movement time points. default: %s' % TIME)
 parser.add_argument('--save', nargs='?', const=None, default=False, help='pickle net (saved to ./data).')
+parser.add_argument('--load', nargs='?', const=None, default=False, help='experiment file to load.')
 
 def print_args(args, default=True):
     a = vars(args)

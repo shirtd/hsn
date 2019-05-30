@@ -17,7 +17,7 @@
 * parallelize
     * persistence
     * bottleneck
-* save experiments
+* ~~save experiments~~
 * ~~only update simplex function value if changed~~
     * plot top-dim simplices only
         * only save function values on these simplices (speedup?)

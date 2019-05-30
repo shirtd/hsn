@@ -1,13 +1,12 @@
 #!/usr/bin/env python
-from primitives.interact import StaticErrorInteract, DynamicErrorInteract
+from primitives.interact import StaticErrorInteract,\
+                                DynamicErrorInteract, load_interact
 from util.data import linear_path, error_probs, circular_path
+from util.tools.io import load_pkl, save_pkl
 from util.args import parser, print_args
 from base.hsn import HSN, LoadHSN
-import pickle as pkl
 import numpy as np
-
-import matplotlib.pyplot as plt
-plt.ion()
+import os
 
 if __name__ == '__main__':
 
@@ -25,8 +24,12 @@ if __name__ == '__main__':
         if args.save is not False:
             net.save(args.save)
 
-    else:
+    elif args.load is not False:
 
+        self = load_interact(args.file, args.load, args.time, args.embedding)
+        input('[ press any key to exit ]')
+
+    else:
         net = LoadHSN(args.file)
         fp = error_probs(args.random_errors, args.non_errors)
 
@@ -41,4 +44,5 @@ if __name__ == '__main__':
             finteract = StaticErrorInteract
 
         self = finteract(net, *ARGS)
+        self.save(args.file, args.time)
         input('[ press any key to exit ]')

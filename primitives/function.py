@@ -72,6 +72,8 @@ class ErrorFunction(Function):
         fclean = self.get_fun(self.K)
         return self.run(fclean, p)
 
+    def get_dict(self):
+        return {'max_error' : self.max_error}
 
 ''' --------------- *
  | CONCRETE OBJECTS |
@@ -95,3 +97,6 @@ class DynamicErrorFunction(ErrorFunction):
         l, p, t = lpt
         fclean = self.get_fun(self.tkern(t))
         return {'label' : l, **self.run(fclean, p)}
+
+    def get_dict(self):
+        return {'max_error' : self.max_error}

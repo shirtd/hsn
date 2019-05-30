@@ -1,9 +1,12 @@
 from primitives.plot import NetPlot, plot_dgm, plt, cm
 from primitives.model import Model, StaticError, DynamicError
+from base.hsn import LoadHSN
 from collections import defaultdict
+from util.tools.io import save_pkl, load_pkl
 import numpy.linalg as la
+import dionysus as dio
 import numpy as np
-import time
+import time, os
 
 ''' -------- *
  | BASE TYPE |
@@ -106,6 +109,20 @@ class ModelInteract(Interact, Model):
         dgm = self.diagram[key]
         return plot_dgm(self.ax[1], dgm, len(dgm) - 1)
 
+    def get_dict(self):
+        d = super().get_dict()
+        args = self.f.get_dict()
+        return {'interact_t' : self.__class__,
+                'args' : args, **d}
+    def save(self, fin, t):
+        name, ext = os.path.splitext(fin)
+        fname, n = '%st%d' % (name, t), 0
+        while os.path.exists('%s_%d%s' % (fname, n, ext)):
+            n += 1
+        fname = '%s_%d%s' % (fname, n, ext)
+        return save_pkl(fname, self.get_dict())
+
+
 ''' --------------- *
  | CONCRETE OBJECTS |
  * --------------- '''
@@ -186,3 +203,34 @@ class DynamicErrorInteract(DynamicError, ModelInteract):
     def select_key(self, key):
         super().select_key(key)
         self.select_curve(key)
+
+def get_name(fnet, time, n):
+    name, ext = os.path.splitext(fnet)
+    return '%st%d_%s%s' % (name, time, n, ext)
+
+def load_interact(fnet, fload=0, time=1, embedding='tsne', **kw):
+    net = LoadHSN(fnet)
+    if isinstance(fload, str) and os.path.exists(fload):
+        fname = fload
+    else:
+        if fload is None:
+            n = 0
+        else:
+            try:
+                n = int(fload)
+            except Exception as err:
+                print('! invalid load parameter %s' % str(fload))
+                n = 0
+        name, ext = os.path.splitext(fnet)
+        fname = '%st%d_%s%s' % (name, time, n, ext)
+    d = load_pkl(fname)
+    return reload_interact(net, **{**d, 'embedding' : embedding, **kw})
+
+def reload_interact(net, interact_t, args, diagram, attributes, embedding='tsne', **kw):
+    interact = interact_t(net, *args)
+    setattr(interact, 'diagram', [[dio.Diagram(d) for d in dgm] for dgm in diagram])
+    for k, v in attributes.items():
+        setattr(interact, k, v)
+    interact.init_plot()
+    interact.init_embedding(embedding, **kw)
+    return interact
