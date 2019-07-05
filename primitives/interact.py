@@ -59,7 +59,7 @@ class Interact(NetPlot):
             key = self.query(axis, e)
             if key:
                 self.plot_key(key)
-                plt.show(False)
+                plt.show(block=False)
         return event
 
     def plot_key(self, key): pass

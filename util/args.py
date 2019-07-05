@@ -1,6 +1,6 @@
 import argparse
 
-TEST = True
+TEST = False
 
 N = 16
 EXP = -5
